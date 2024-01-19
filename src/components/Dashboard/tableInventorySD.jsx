@@ -9,16 +9,30 @@ import {
   Tr,
   CircularProgress,
 } from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import {
   useGlobalFilter,
   usePagination,
   useSortBy,
   useTable,
 } from "react-table";
+import { columnsDataSD } from "./variables/ColumnData";
+
+const fetchData = async () => {
+  // Replace this with your actual data fetching logic
+  const response = await fetch("http://localhost:5000/api/TopPerSumberDaya");
+  const data = await response.json();
+  return data;
+};
 
 export default function TableInventorySD(props) {
-  const { columnsData, tableData } = props;
+  const columnsData = columnsDataSD;
+  const [tableData, setTableData] = useState([]);
+
+  useEffect(() => {
+    // Fetch data when the component mounts
+    fetchData().then((data) => setTableData(data));
+  }, []);
 
   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);

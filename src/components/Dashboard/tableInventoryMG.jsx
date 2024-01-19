@@ -1,15 +1,5 @@
-import {
-  Flex,
-  Table,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tr,
-  CircularProgress,
-} from "@chakra-ui/react";
-import React, { useMemo } from "react";
+import { Flex, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
+import React, { useMemo, useState, useEffect } from "react";
 import {
   useGlobalFilter,
   usePagination,
@@ -17,9 +7,70 @@ import {
   useTable,
 } from "react-table";
 import { Message } from "primereact/message";
+import { Dropdown } from "primereact/dropdown";
+import { columnsDataMG } from "./variables/ColumnData";
 
 export default function TableInventoryMG(props) {
-  const { columnsData, tableData } = props;
+  const columnsData = columnsDataMG;
+  const [tableData, setTableData] = useState([]);
+  const [selectedMaterialGroup, setSelectedMaterialGroup] = useState(null);
+  const [materialOptions, setMaterialOptions] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchMaterialOptions = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/materialGroup");
+      const data = await response.json();
+
+      // Extract unique material options from the fetched data
+      if (Array.isArray(data)) {
+        // Extract unique material options from the fetched data
+        const uniqueMaterialOptions = Array.from(
+          new Set(data.map((item) => item.kodeMaterialGrup))
+        ).map((name) => ({ name }));
+
+        setMaterialOptions(uniqueMaterialOptions);
+        setLoading(false);
+      } else {
+        console.error("Invalid response format:", data);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Error fetching material options:", error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // Fetch material options when the component mounts
+    fetchMaterialOptions();
+  }, []);
+
+  const fetchData = async (selectedMaterialGroup) => {
+    // Replace this with your actual data fetching logic
+    const url = `http://localhost:5000/api/TopPerSumberDaya/${selectedMaterialGroup.name}`;
+    // console.log("Fetching data from URL:", url);
+
+    const response = await fetch(url);
+    const data = await response.json();
+    // console.log("Fetched data:", data);
+
+    return data;
+  };
+
+  useEffect(() => {
+    if (!selectedMaterialGroup) {
+      setTableData([]); // Clear table data
+    }
+  }, [selectedMaterialGroup]);
+
+  useEffect(() => {
+    // Fetch data when selectedMaterialGroup changes
+    fetchData(selectedMaterialGroup).then((data) => {
+      // console.log("Data received:", data);
+      setTableData(data);
+    });
+  }, [selectedMaterialGroup]);
 
   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);
@@ -34,15 +85,8 @@ export default function TableInventoryMG(props) {
     usePagination
   );
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    page,
-    prepareRow,
-    // initialState,
-  } = tableInstance;
-  // initialState.pageSize = 10;
+  const { getTableProps, getTableBodyProps, headerGroups, page, prepareRow } =
+    tableInstance;
 
   return (
     <Flex direction="column">
@@ -150,7 +194,6 @@ export default function TableInventoryMG(props) {
         </Table>
       ) : (
         <Flex align="center" justify="center" h="100%">
-          {/* <CircularProgress isIndeterminate color="blue.400" size="20px" /> */}
           <Message
             severity="warn"
             text="Pilih Filter Material Group terlebih dahulu"

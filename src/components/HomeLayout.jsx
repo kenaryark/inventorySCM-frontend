@@ -1,6 +1,5 @@
 import { Navigate, useOutlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { Menubar } from "primereact/menubar";
 
 export const HomeLayout = () => {
   const { user } = useAuth();
@@ -20,10 +19,5 @@ export const HomeLayout = () => {
     },
   ];
 
-  return (
-    <div>
-      {/* <Menubar model={items} /> */}
-      {outlet}
-    </div>
-  );
+  return <div>{outlet}</div>;
 };

@@ -1,7 +1,5 @@
-// import { StrictMode } from 'react'
 import React from "react";
 import { createRoot } from "react-dom/client";
-// import { BrowserRouter } from "react-router-dom";
 import { router } from "./App";
 import { StrictMode } from "react";
 import { RouterProvider } from "react-router-dom";
@@ -14,18 +12,12 @@ import "./theme.css";
 import "primereact/resources/primereact.min.css";
 // import "primeflex/primeflex.css";
 import "primeicons/primeicons.css";
-// import "./flags.css";
 import "./index.css";
 
 const rootElement = document.getElementById("root");
 const root = createRoot(rootElement);
 
 root.render(
-  // <StrictMode>
-  //   <BrowserRouter>
-  //   </BrowserRouter>
-  // </StrictMode>,
-  // <App />
   <StrictMode>
     <ChakraProvider>
       <PrimeReactProvider>

@@ -17,7 +17,7 @@ import {
   ModalCloseButton,
   CircularProgress,
 } from "@chakra-ui/react";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import {
   useGlobalFilter,
   usePagination,
@@ -25,9 +25,22 @@ import {
   useTable,
 } from "react-table";
 import ModalTable from "./modalTable";
+import { columnsDataProyek } from "./variables/ColumnData";
+
+const fetchData = async () => {
+  // Replace this with your actual data fetching logic
+  const response = await fetch("http://localhost:5000/api/TopPerProyek");
+  const data = await response.json();
+  return data;
+};
 
 export default function TableInventoryProyek(props) {
-  const { columnsData, tableData } = props;
+  const columnsData = columnsDataProyek;
+  const [tableData, setTableData] = useState([]);
+  useEffect(() => {
+    // Fetch data when the component mounts
+    fetchData().then((data) => setTableData(data));
+  }, []);
 
   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);

@@ -148,8 +148,17 @@ function ChartMonthDivisi(props) {
         labels: {
           formatter: function (value) {
             var val = Math.abs(value);
-            if (val >= 1000000000) {
-              val = (val / 1000000000).toFixed(0) + " M";
+            if (val >= 1000 && val < 1000000) {
+              val = (val / 1000).toFixed(0) + " Ribu";
+            }
+            if (val >= 1000000 && val < 1000000000) {
+              val = (val / 1000000).toFixed(0) + " Juta";
+            }
+            if (val >= 1000000000 && val < 1000000000000) {
+              val = (val / 1000000000).toFixed(0) + " Milyar";
+            }
+            if (val >= 1000000000000) {
+              val = (val / 1000000000000).toFixed(0) + " Triliun";
             }
             return "Rp " + val;
           },
